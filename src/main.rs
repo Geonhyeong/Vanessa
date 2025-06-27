@@ -1,4 +1,4 @@
-use tonic::{Request, Response, Status, transport::Server};
+use tonic::{transport::Server, Request, Response, Status};
 
 // tonic-build가 생성한 코드를 include
 pub mod vanessa {
@@ -49,10 +49,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:50051".parse()?;
     let vanessa_service = MyVanessaService::default();
 
+    // Reflection 서비스 설정
+    let reflection_service = tonic_reflection::server::Builder::configure()
+        .register_encoded_file_descriptor_set(include_bytes!(concat!(
+            env!("OUT_DIR"),
+            "/vanessa_descriptor.bin"
+        )))
+        .build_v1()?;
+
     println!("VanessaService listening on {}", addr);
 
     Server::builder()
         .add_service(VanessaServiceServer::new(vanessa_service))
+        .add_service(reflection_service)
         .serve(addr)
         .await?;
 
