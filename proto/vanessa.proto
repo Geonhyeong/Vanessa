@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package vanessa;
+
+// 간단한 예제 서비스
+service VanessaService {
+    rpc SayHello (HelloRequest) returns (HelloReply);
+    rpc GetStatus (StatusRequest) returns (StatusReply);
+}
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloReply {
+    string message = 1;
+}
+
+message StatusRequest {
+}
+
+message StatusReply {
+    string status = 1;
+    int64 timestamp = 2;
+}
